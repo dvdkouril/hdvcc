@@ -2,7 +2,10 @@ const std = @import("std");
 
 pub fn main() !void {
     // Prints to stderr (it's a shortcut based on `std.io.getStdErr()`)
-    std.debug.print("All your {s} are belong to us.\n", .{"codebase"});
+    // std.debug.print("All your {s} are belong to us.\n", .{"codebase"});
+
+    const image_width = 256;
+    const image_height = 256;
 
     // stdout is for the actual output of your application, for example if you
     // are implementing gzip, then only the compressed bytes should be sent to
@@ -11,7 +14,7 @@ pub fn main() !void {
     var bw = std.io.bufferedWriter(stdout_file);
     const stdout = bw.writer();
 
-    try stdout.print("Run `zig build test` to run the tests.\n", .{});
+    try stdout.print("P3\n{d} {d}\n", .{ image_width, image_height });
 
     try bw.flush(); // don't forget to flush!
 }
