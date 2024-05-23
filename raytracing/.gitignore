@@ -17,4 +17,5 @@ zig-out/
 /build-*/
 /docgen_tmp/
 img.ppm
+image.ppm
 .DS_Store
