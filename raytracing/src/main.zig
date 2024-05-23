@@ -14,7 +14,21 @@ pub fn main() !void {
     var bw = std.io.bufferedWriter(stdout_file);
     const stdout = bw.writer();
 
-    try stdout.print("P3\n{d} {d}\n", .{ image_width, image_height });
+    try stdout.print("P3\n{d} {d}\n255\n", .{ image_width, image_height });
+
+    for (0..image_height) |j| {
+        for (0..image_width) |i| {
+            const r = @as(f32, @floatFromInt(i)) / (image_width - 1);
+            const g = @as(f32, @floatFromInt(j)) / (image_height - 1);
+            const b: f32 = 0.0;
+
+            const ir = @as(usize, @intFromFloat(255.999 * r));
+            const ig = @as(usize, @intFromFloat(255.999 * g));
+            const ib = @as(usize, @intFromFloat(255.999 * b));
+
+            try stdout.print("{d} {d} {d}\n", .{ ir, ig, ib });
+        }
+    }
 
     try bw.flush(); // don't forget to flush!
 }
