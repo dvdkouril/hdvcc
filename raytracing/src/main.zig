@@ -18,9 +18,7 @@ const Vec3 = struct {
     }
 
     pub fn add(self: Vec3, other: Vec3) Vec3 {
-       return Vec3.init(self.x + other.x,
-                        self.y + other.y,
-                        self.z + other.z);
+        return Vec3.init(self.x + other.x, self.y + other.y, self.z + other.z);
     }
 
     pub fn inverse(self: Vec3) Vec3 {
@@ -67,9 +65,8 @@ const Vec3 = struct {
         _: std.fmt.FormatOptions,
         writer: anytype,
     ) !void {
-        try writer.print("Vec3({}, {}, {})\n", .{self.x, self.y, self.z });
+        try writer.print("Vec3({}, {}, {})\n", .{ self.x, self.y, self.z });
     }
-
 };
 
 const Point3 = Vec3;
@@ -105,13 +102,12 @@ pub fn main() !void {
 
     std.debug.print("\rDone.    \n", .{});
 
-
     try bw.flush(); // don't forget to flush!
 
     const posA = Point3.init(3, 2, 1);
     const posB = Point3.init(1, 2, 3);
     const res = posA.add(posB);
-    std.debug.print("res = {}", .{ res });
+    std.debug.print("res = {}", .{res});
 }
 
 test "simple test" {
