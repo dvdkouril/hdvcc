@@ -37,16 +37,6 @@ const Vec3 = struct {
         return Vec3.dot(self, self);
     }
 
-    // inline vec3 cross(const vec3& u, const vec3& v) {
-    //     return vec3(u.e[1] * v.e[2] - u.e[2] * v.e[1],
-    //                 u.e[2] * v.e[0] - u.e[0] * v.e[2],
-    //                 u.e[0] * v.e[1] - u.e[1] * v.e[0]);
-    // }
-
-    // inline vec3 unit_vector(const vec3& v) {
-    //     return v / v.length();
-    // }
-
     pub fn cross(self: Vec3, other: Vec3) Vec3 {
         return Vec3(
             self.y * other.z - self.z * other.y,
@@ -130,6 +120,5 @@ test "Vec3.add" {
 test "Vec3.normalized" {
     const vec = Vec3.init(5000, 42, 123);
     const nlength = @round(vec.normalized().length());
-    // std.debug.print("{}\n {}", .{ vec, nlength });
     try std.testing.expectEqual(1, @as(usize, @intFromFloat(nlength)));
 }
