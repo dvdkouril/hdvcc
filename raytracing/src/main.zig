@@ -62,7 +62,7 @@ const Vec3 = struct {
 const Point3 = Vec3;
 const Color = Vec3;
 
-fn write_color(stdout: anytype, color: Color) !void {
+fn write_color(writer: anytype, color: Color) !void {
     const r = color.x;
     const g = color.y;
     const b = color.z;
@@ -71,7 +71,7 @@ fn write_color(stdout: anytype, color: Color) !void {
     const ig = @as(usize, @intFromFloat(255.999 * g));
     const ib = @as(usize, @intFromFloat(255.999 * b));
 
-    try stdout.print("{d} {d} {d}\n", .{ ir, ig, ib });
+    try writer.print("{d} {d} {d}\n", .{ ir, ig, ib });
 }
 
 pub fn main() !void {
