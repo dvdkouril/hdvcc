@@ -60,6 +60,19 @@ const Vec3 = struct {
 };
 
 const Point3 = Vec3;
+const Color = Vec3;
+
+fn write_color(stdout: anytype, color: Color) !void {
+    const r = color.x;
+    const g = color.y;
+    const b = color.z;
+
+    const ir = @as(usize, @intFromFloat(255.999 * r));
+    const ig = @as(usize, @intFromFloat(255.999 * g));
+    const ib = @as(usize, @intFromFloat(255.999 * b));
+
+    try stdout.print("{d} {d} {d}\n", .{ ir, ig, ib });
+}
 
 pub fn main() !void {
     const image_width = 256;
@@ -78,15 +91,8 @@ pub fn main() !void {
         std.debug.print("\rScanlines remaining: {d}", .{image_height - j});
 
         for (0..image_width) |i| {
-            const r = @as(f32, @floatFromInt(i)) / (image_width - 1);
-            const g = @as(f32, @floatFromInt(j)) / (image_height - 1);
-            const b: f32 = 0.0;
-
-            const ir = @as(usize, @intFromFloat(255.999 * r));
-            const ig = @as(usize, @intFromFloat(255.999 * g));
-            const ib = @as(usize, @intFromFloat(255.999 * b));
-
-            try stdout.print("{d} {d} {d}\n", .{ ir, ig, ib });
+            const pixel_color = Color.init(@as(f32, @floatFromInt(i)) / (image_width - 1), @as(f32, @floatFromInt(j)) / (image_height - 1), 0.0);
+            try write_color(stdout, pixel_color);
         }
     }
 
