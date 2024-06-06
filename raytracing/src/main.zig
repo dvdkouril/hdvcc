@@ -75,7 +75,7 @@ const Ray = struct {
     }
 };
 
-fn write_color(writer: anytype, color: Color) !void {
+fn writeColor(writer: anytype, color: Color) !void {
     const r = color.x;
     const g = color.y;
     const b = color.z;
@@ -105,7 +105,7 @@ pub fn main() !void {
 
         for (0..image_width) |i| {
             const pixel_color = Color.init(@as(f32, @floatFromInt(i)) / (image_width - 1), @as(f32, @floatFromInt(j)) / (image_height - 1), 0.0);
-            try write_color(stdout, pixel_color);
+            try writeColor(stdout, pixel_color);
         }
     }
 
