@@ -80,9 +80,9 @@ fn writeColor(writer: anytype, color: Color) !void {
     const g = color.y;
     const b = color.z;
 
-    const ir = @as(usize, @intFromFloat(255.999 * r));
-    const ig = @as(usize, @intFromFloat(255.999 * g));
-    const ib = @as(usize, @intFromFloat(255.999 * b));
+    const ir: usize = @intFromFloat(255.999 * r);
+    const ig: usize = @intFromFloat(255.999 * g);
+    const ib: usize = @intFromFloat(255.999 * b);
 
     try writer.print("{d} {d} {d}\n", .{ ir, ig, ib });
 }
