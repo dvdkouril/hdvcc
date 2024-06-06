@@ -62,6 +62,20 @@ const Vec3 = struct {
 const Point3 = Vec3;
 const Color = Vec3;
 
+const Ray = struct {
+    origin: Point3,
+    direction: Vec3,
+
+    pub fn init(origin: Point3, direction: Vec3) Ray {
+        return Ray { .origin = origin, .direction = direction };
+    }
+
+    pub fn at(self: Ray, t: f32) Point3 {
+        return self.origin.add(self.direction.scaled(t));
+    }
+
+};
+
 fn write_color(writer: anytype, color: Color) !void {
     const r = color.x;
     const g = color.y;
