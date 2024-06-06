@@ -150,4 +150,6 @@ test "Ray.at" {
     );
     const point = ray.at(5);
     try std.testing.expectEqual(5, @as(usize, @intFromFloat(point.x)));
+    try std.testing.expectEqual(0, @as(usize, @intFromFloat(point.y)));
+    try std.testing.expectEqual(0, @as(usize, @intFromFloat(point.z)));
 }
