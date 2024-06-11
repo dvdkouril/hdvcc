@@ -19,3 +19,4 @@ zig-out/
 img.ppm
 image.ppm
 .DS_Store
+.zig-cache

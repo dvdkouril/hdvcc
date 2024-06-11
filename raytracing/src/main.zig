@@ -6,7 +6,7 @@ const Vec3 = struct {
     z: f32,
 
     pub fn origin() Vec3 {
-        return Vec3{ 0.0, 0.0, 0.0 };
+        return Vec3{ .x = 0.0, .y = 0.0, .z = 0.0 };
     }
 
     pub fn init(x: f32, y: f32, z: f32) Vec3 {
@@ -60,6 +60,32 @@ const Vec3 = struct {
 };
 
 const Point3 = Vec3;
+const Color = Vec3;
+
+const Ray = struct {
+    origin: Point3,
+    direction: Vec3,
+
+    pub fn init(origin: Point3, direction: Vec3) Ray {
+        return Ray{ .origin = origin, .direction = direction };
+    }
+
+    pub fn at(self: Ray, t: f32) Point3 {
+        return self.origin.add(self.direction.scaled(t));
+    }
+};
+
+fn writeColor(writer: anytype, color: Color) !void {
+    const r = color.x;
+    const g = color.y;
+    const b = color.z;
+
+    const ir: usize = @intFromFloat(255.999 * r);
+    const ig: usize = @intFromFloat(255.999 * g);
+    const ib: usize = @intFromFloat(255.999 * b);
+
+    try writer.print("{d} {d} {d}\n", .{ ir, ig, ib });
+}
 
 pub fn main() !void {
     const image_width = 256;
@@ -78,15 +104,8 @@ pub fn main() !void {
         std.debug.print("\rScanlines remaining: {d}", .{image_height - j});
 
         for (0..image_width) |i| {
-            const r = @as(f32, @floatFromInt(i)) / (image_width - 1);
-            const g = @as(f32, @floatFromInt(j)) / (image_height - 1);
-            const b: f32 = 0.0;
-
-            const ir = @as(usize, @intFromFloat(255.999 * r));
-            const ig = @as(usize, @intFromFloat(255.999 * g));
-            const ib = @as(usize, @intFromFloat(255.999 * b));
-
-            try stdout.print("{d} {d} {d}\n", .{ ir, ig, ib });
+            const pixel_color = Color.init(@as(f32, @floatFromInt(i)) / (image_width - 1), @as(f32, @floatFromInt(j)) / (image_height - 1), 0.0);
+            try writeColor(stdout, pixel_color);
         }
     }
 
@@ -121,4 +140,16 @@ test "Vec3.normalized" {
     const vec = Vec3.init(5000, 42, 123);
     const nlength = @round(vec.normalized().length());
     try std.testing.expectEqual(1, @as(usize, @intFromFloat(nlength)));
+}
+
+test "Ray.at" {
+    // 0, 0, 0 direciton is 1, 0, 0 t =  5, 5, 0, 0
+    const ray = Ray.init(
+        Vec3.origin(),
+        Point3.init(1, 0, 0),
+    );
+    const point = ray.at(5);
+    try std.testing.expectEqual(5, @as(usize, @intFromFloat(point.x)));
+    try std.testing.expectEqual(0, @as(usize, @intFromFloat(point.y)));
+    try std.testing.expectEqual(0, @as(usize, @intFromFloat(point.z)));
 }
