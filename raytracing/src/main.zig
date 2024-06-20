@@ -1,63 +1,5 @@
 const std = @import("std");
-
-const Vec3 = struct {
-    x: f32,
-    y: f32,
-    z: f32,
-
-    pub fn origin() Vec3 {
-        return Vec3{ .x = 0.0, .y = 0.0, .z = 0.0 };
-    }
-
-    pub fn init(x: f32, y: f32, z: f32) Vec3 {
-        return Vec3{ .x = x, .y = y, .z = z };
-    }
-
-    pub fn dot(self: Vec3, other: Vec3) f32 {
-        return self.x * other.x + self.y * other.y + self.z * other.z;
-    }
-
-    pub fn add(self: Vec3, other: Vec3) Vec3 {
-        return Vec3.init(self.x + other.x, self.y + other.y, self.z + other.z);
-    }
-
-    pub fn inverse(self: Vec3) Vec3 {
-        return Vec3.init(-self.x, -self.y, -self.z);
-    }
-
-    pub fn scaled(self: Vec3, s: f32) Vec3 {
-        return Vec3.init(self.x * s, self.y * s, self.z * s);
-    }
-
-    pub fn length(self: Vec3) f32 {
-        return std.math.sqrt(self.lengthSquared());
-    }
-
-    pub fn lengthSquared(self: Vec3) f32 {
-        return Vec3.dot(self, self);
-    }
-
-    pub fn cross(self: Vec3, other: Vec3) Vec3 {
-        return Vec3(
-            self.y * other.z - self.z * other.y,
-            self.z * other.x - self.x * other.z,
-            self.x * other.y - self.y * other.x,
-        );
-    }
-
-    pub fn normalized(self: Vec3) Vec3 {
-        return Vec3.scaled(self, 1 / self.length());
-    }
-
-    pub fn format(
-        self: Vec3,
-        comptime _: []const u8,
-        _: std.fmt.FormatOptions,
-        writer: anytype,
-    ) !void {
-        try writer.print("Vec3({}, {}, {})\n", .{ self.x, self.y, self.z });
-    }
-};
+const Vec3 = @import("vec3.zig").Vec3;
 
 const Point3 = Vec3;
 const Color = Vec3;
@@ -88,8 +30,16 @@ fn writeColor(writer: anytype, color: Color) !void {
 }
 
 pub fn main() !void {
-    const image_width = 256;
-    const image_height = 256;
+    const aspect_ratio = 16.0 / 9.0;
+    const image_width = 400;
+    // // Calculate the image height, and ensure that it's at least 1.
+    const image_height: comptime_int = comptime @intFromFloat(@as(f64, @floatFromInt(image_width)) / aspect_ratio);
+
+    // Viewport widths less than one are ok since they are real valued.
+    // TODO: Week 6
+    // const viewport_height: f64 = 2.0;
+    // const viewport_width: f64 = viewport_height * (@as(f64, @floatFromInt(image_width)) / image_height);
+    // const camera_position = Point3.origin();
 
     // stdout is for the actual output of your application, for example if you
     // are implementing gzip, then only the compressed bytes should be sent to
@@ -104,7 +54,10 @@ pub fn main() !void {
         std.debug.print("\rScanlines remaining: {d}", .{image_height - j});
 
         for (0..image_width) |i| {
-            const pixel_color = Color.init(@as(f32, @floatFromInt(i)) / (image_width - 1), @as(f32, @floatFromInt(j)) / (image_height - 1), 0.0);
+            const r = @as(f32, @floatFromInt(i)) / (image_width - 1);
+            const g = @as(f32, @floatFromInt(j)) / (image_height - 1);
+            const b: f32 = 0.0;
+            const pixel_color = Color.init(r, g, b);
             try writeColor(stdout, pixel_color);
         }
     }
@@ -124,22 +77,6 @@ test "simple test" {
     defer list.deinit(); // try commenting this out and see if zig detects the memory leak!
     try list.append(42);
     try std.testing.expectEqual(@as(i32, 42), list.pop());
-}
-
-test "Vec3.add" {
-    const a = Vec3.init(3.0, 2.0, 1.0);
-    const b = Vec3.init(1.0, 2.0, 3.0);
-    const result = a.add(b);
-
-    try std.testing.expect(@as(usize, @intFromFloat(result.x)) == 4);
-    try std.testing.expect(@as(usize, @intFromFloat(result.y)) == 4);
-    try std.testing.expect(@as(usize, @intFromFloat(result.z)) == 4);
-}
-
-test "Vec3.normalized" {
-    const vec = Vec3.init(5000, 42, 123);
-    const nlength = @round(vec.normalized().length());
-    try std.testing.expectEqual(1, @as(usize, @intFromFloat(nlength)));
 }
 
 test "Ray.at" {
