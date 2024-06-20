@@ -21,6 +21,10 @@ pub const Vec3 = struct {
         return Vec3.init(self.x + other.x, self.y + other.y, self.z + other.z);
     }
 
+    pub fn sub(self: Vec3, other: Vec3) Vec3 {
+        return Vec3.init(self.x - other.x, self.y - other.y, self.z - other.z);
+    }
+
     pub fn inverse(self: Vec3) Vec3 {
         return Vec3.init(-self.x, -self.y, -self.z);
     }
