@@ -29,6 +29,15 @@ fn writeColor(writer: anytype, color: Color) !void {
     try writer.print("{d} {d} {d}\n", .{ ir, ig, ib });
 }
 
+fn rayColor(ray: Ray) Color {
+    const unitDirection = ray.direction.normalized();
+    const a = 0.5 * (unitDirection.y + 1.0);
+    return Color.add(
+        Color.init(1.0, 1.0, 1.0).scaled(1.0 - a),
+        Color.init(0.5, 0.7, 1.0).scaled(a),
+    );
+}
+
 pub fn main() !void {
 
     // Image
@@ -39,10 +48,11 @@ pub fn main() !void {
     const image_height: comptime_int = comptime @intFromFloat(@as(f64, @floatFromInt(image_width)) / aspect_ratio);
 
     // Camera
+    const focal_length = 1;
 
     // Viewport widths less than one are ok since they are real valued.
-    const viewport_height: f64 = 2.0;
-    const viewport_width: f64 = viewport_height * (@as(f64, @floatFromInt(image_width)) / image_height);
+    const viewport_height: f32 = 2.0;
+    const viewport_width: f32 = viewport_height * (@as(f32, @floatFromInt(image_width)) / image_height);
     const camera_center = Point3.origin();
 
     // Calculate the vectors across the horizontal and down
@@ -53,8 +63,8 @@ pub fn main() !void {
     const viewport_v = Vec3.init(0, -viewport_height, 0);
 
     // Calculate the horizontal and vertical delta vectors from pixel to pixel.
-    const pixel_delta_u = viewport_u.scaled(1.0 / image_width);
-    const pixel_delta_v = viewport_v.scaled(1.0 / image_height);
+    const pixel_delta_u = viewport_u.scaled(1.0 / @as(f32, @floatFromInt(image_width)));
+    const pixel_delta_v = viewport_v.scaled(1.0 / @as(f32, @floatFromInt(image_height)));
 
     // Calculate the location of the upper left pixel.
     const viewport_upper_left = camera_center
@@ -79,19 +89,14 @@ pub fn main() !void {
         for (0..image_width) |i| {
             const ifloat = @as(f32, @floatFromInt(i));
             const jfloat = @as(f32, @floatFromInt(j));
-            const r = ifloat / (image_width - 1);
-            const g = ifloat / (image_height - 1);
-            const b: f32 = 0.0;
-            const pixel_color = Color.init(r, g, b);
 
-            const pixel_center = pixel00_loc.add(
-                Vec3.add(pixel_delta_u.scaled(ifloat),
-                Vec3.add(pixel_delta_v.scaled(jfloat))
-            );
+            const pixel_center = pixel00_loc
+                .add(pixel_delta_u.scaled(ifloat))
+                .add(pixel_delta_v.scaled(jfloat));
 
             const ray_direction = pixel_center.sub(camera_center);
             const ray = Ray.init(camera_center, ray_direction);
-            const pixel_color = ray_color(ray);
+            const pixel_color = rayColor(ray);
 
             try writeColor(stdout, pixel_color);
         }
