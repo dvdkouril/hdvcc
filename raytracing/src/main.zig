@@ -30,12 +30,24 @@ fn writeColor(writer: anytype, color: Color) !void {
 }
 
 fn rayColor(ray: Ray) Color {
+    if (hitSphere(Point3.init(0.0, 0.0, -1.0), 0.5, ray)) {
+        return Color.init(1.0, 0.0, 0.0);
+    }
     const unitDirection = ray.direction.normalized();
     const a = 0.5 * (unitDirection.y + 1.0);
     return Color.add(
         Color.init(1.0, 1.0, 1.0).scaled(1.0 - a),
         Color.init(0.5, 0.7, 1.0).scaled(a),
     );
+}
+
+fn hitSphere(center: Point3, radius: f32, ray: Ray) bool {
+    const oc = center.sub(ray.origin);
+    const a = Vec3.dot(ray.direction, ray.direction);
+    const b = -2.0 * Vec3.dot(ray.direction, oc);
+    const c = Vec3.dot(oc, oc) - radius * radius;
+    const discriminant = b * b - 4 * a * c;
+    return discriminant >= 0;
 }
 
 pub fn main() !void {
