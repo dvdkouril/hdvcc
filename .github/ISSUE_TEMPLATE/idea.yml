@@ -1,0 +1,28 @@
+name: "\U0001F4A1 Session idea"
+description: Suggest an idea for a future coding club session
+labels: ["idea"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Briefly describe the main concept or project idea
+      placeholder: "a compiler from json schema to python bindings..."
+  - type: input
+    id: technologies
+    attributes:
+      label: Technologies/Languages
+      description: Rough idea of technologies or languages involved
+      placeholder: "rust, web-sockets, etc."
+  - type: input
+    id: duration
+    attributes:
+      label: Duration / Difficulty
+      description: How long might this session take?
+      placeholder: "single session (1-2 hours), multiple sessions, etc."
+  - type: textarea
+    id: additional-notes
+    attributes:
+      label: Additional Notes
+      description: Any other relevant information
+      placeholder: "links, resources, etc."
